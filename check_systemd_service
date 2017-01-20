@@ -1,0 +1,13 @@
+#!/bin/bash
+
+STATE=`systemctl show $1`
+ACTIVESTATE=`echo "$STATE" | grep ActiveState | cut -d "=" -f 2`
+SUBSTATE=`echo "$STATE" | grep SubState | cut -d "=" -f 2`
+SINCE=`echo "$STATE" | grep ExecMainExitTimestamp= | cut -d "=" -f 2`
+
+if [ $ACTIVESTATE = "active" ] && [ $SUBSTATE = "running" ]; then
+    echo "OK: systemd service is active and running."
+else
+    echo "CRITICAL: $ACTIVESTATE ($SUBSTATE) since $SINCE."
+    exit 2
+fi
